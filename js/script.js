@@ -3,109 +3,144 @@
 const table = document.querySelector('.table tbody');
 const button = document.querySelector('.add');
 const clear = document.querySelector('.clear');
+const local = localStorage;
+let tableTitle;
 
 
-// Закрыть bg фон в начале
+// Создать или выбрать таблицу.
 const closeBg = function () {
-  const button = document.querySelector('.bg-start > button');
-  const bg = document.querySelector('.bg-start');
-  const input = document.querySelector('.bg-start input');
+    const button = document.querySelector('.bg-start__wrap > button');
+    const bg = document.querySelector('.bg-start__wrap');
+    const input = document.querySelector('.bg-start__wrap input');
+    const tableList = document.querySelector('.table-list');
 
-  const cb = function(e) {
-    bg.classList.add('bg-start-hidden');
-    table.previousElementSibling.innerHTML = bg.firstElementChild.value;
-    setTimeout(() => bg.remove(), 2000);
-    table.parentElement.classList.add('table-show');
-  };
-
-  button.addEventListener('click', (e) => cb(e));
-  input.addEventListener('keyup', (e) => {
-    if (e.keyCode !== 13) return;
-    cb(e);
-  });
-};
-
-//Код для таблицы
-const appTable = function () {
-  // Создать input столько, сколько человеку нужно.
-  const getCountTitle = function (n, th) {
-    let result = '';
-    for (let i = 0; i < n; i++) {
-      if (!th.length) {
-        result += '<input type="text" placeholder="Пример: возраст, имя и тд">';
-      } else {
-        result += `<input type="text" placeholder="${th[i].firstChild.data.trim()}">`;
-      }
-    }
-    return result;
-  };
-
-  // Получения количества инпутов и проверка корректности данных.
-  const checkCorrectData = function () {
-    let count = prompt('Сколько полей вам нужно?(Меньше 15)', 1);
-
-    while (isNaN(+count) || count > 15 || count === null || +count === 0) {
-      let conf = confirm('Ошибка данных. Если у вас есть заголовки, введите число не больше, чем заголовков. Хотите ввести еше раз?');
-
-      if (!conf) {
-        return false;
-      }
-      count = +prompt('Сколько полей с заголовками вам нужно?(Меньше 15)', 1);
-    }
-    return count;
-  };
-  
-  // Создать tr, th and td 
-  const createData = function (first, data) {
-    const tr = document.createElement('tr');
-
-    for (let char of data) {
-      const column = document.createElement(first ? 'th' : 'td');
-      column.innerHTML = char.value;
-      tr.append(column);
+    for (let elem of Object.keys(local)) {
+        tableList.insertAdjacentHTML('beforeend', `<li class="table-list__item"><a href="#">${elem}</a></li>`);
     }
 
-    table.append(tr);
-  };
+    const selectTable = function(e) {
+        e.preventDefault();
+        const target = e.target.closest('a');
 
-  let count; 
-  // Основная функция, которая создает элементы, следит за событиями.
-  const addItem = function () {
-    const div = document.createElement('div');
-    const submit = document.createElement('button');
-    const form = document.createElement('form');
-    let firstTime = !table.getElementsByTagName('tr').length;
-    count = count ? count : checkCorrectData();
-    const th = table.getElementsByTagName('th');
+        if (!target || !local.hasOwnProperty(target.innerHTML.trim())) return;
 
-    if (count === false) return;
+        getReadyTable(target.innerHTML.trim());
+        cb(e, target.innerHTML.trim());
+    }
 
-    div.className = 'popup';
-    div.prepend(form);
+    const cb = function (e, nameTable) {
+        tableTitle = bg.firstElementChild.value;
+        tableTitle = tableTitle ? tableTitle[0].toUpperCase() + tableTitle.slice(1).toLowerCase() : nameTable;
+        bg.parentElement.classList.add('bg-start-hidden');
 
-    form.method = 'GET';
-    form.innerHTML = getCountTitle(count, th);
-    form.append(submit);
+        if (local.hasOwnProperty(tableTitle)) {
+            getReadyTable(tableTitle);
+        } else {
+            local.setItem(tableTitle, '');
+        }
+        
+        table.previousElementSibling.innerHTML = tableTitle;
+        setTimeout(() => bg.parentElement.remove(), 2000);
+        table.parentElement.classList.add('table-show');
+    };
 
-
-    submit.className = 'popup__btn button';
-    submit.type = 'submit';
-    submit.innerHTML = 'Создать';
-
-    document.body.prepend(div);
-
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      div.remove();
-      createData(firstTime, form.getElementsByTagName('input'));
+    tableList.addEventListener('click', selectTable);
+    button.addEventListener('click', () => cb);
+    input.addEventListener('keyup', (e) => {
+        if (e.keyCode !== 13) return;
+        cb();
     });
-  };
-
-  button.addEventListener('click', addItem);
-  clear.addEventListener('click', () => {
-    table.innerHTML = '';
-    count = null;
-  });
 };
+
+// Если таблица уже была, создать ее. Строка 26.
+const getReadyTable = function(title) {
+    table.innerHTML = local.getItem(title);
+}
+
+//Код для таблицы. Строка 128
+const appTable = function () {
+    // Создать input столько, сколько человеку нужно. Строка 103
+    const getCountTitle = function (n, th) {
+        let result = '';
+        for (let i = 0; i < n; i++) {
+            if (!th.length) {
+                result += '<input type="text" placeholder="Пример: возраст, имя и тд">';
+            } else {
+                result += `<input type="text" placeholder="${th[i].firstChild.data.trim()}">`;
+            }
+        }
+        return result;
+    };
+
+    // Получения количества инпутов и проверка корректности данных.
+    const checkCorrectData = function () {
+        let count = prompt('Сколько полей вам нужно?(Меньше 15)', 1);
+
+        while (isNaN(+count) || count > 15 || count === null || +count === 0) {
+            let conf = confirm('Ошибка данных. Если у вас есть заголовки, введите число не больше, чем заголовков. Хотите ввести еше раз?');
+
+            if (!conf) {
+                return false;
+            }
+            count = +prompt('Сколько полей с заголовками вам нужно?(Меньше 15)', 1);
+        }
+        return count;
+    };
+
+    // Создать tr, th and td 
+    const createData = function (first, data) {
+        const tr = document.createElement('tr');
+
+        for (let char of data) {
+            const column = document.createElement(first ? 'th' : 'td');
+            column.innerHTML = char.value;
+            tr.append(column);
+        }
+        
+        table.append(tr);
+        local.setItem(tableTitle, table.innerHTML);
+    };
+
+    let count;
+    // Основная функция, которая создает элементы, следит за событиями.
+    const addItem = function () {
+        const div = document.createElement('div');
+        const submit = document.createElement('button');
+        const form = document.createElement('form');
+        let firstTime = !table.getElementsByTagName('tr').length;
+        const th = table.getElementsByTagName('th');
+        count = count || !!th.length ? (count || th.length) : checkCorrectData();
+
+        if (count === false) return;
+
+        div.className = 'popup';
+        div.prepend(form);
+
+        form.method = 'GET';
+        form.innerHTML = getCountTitle(count, th);
+        form.append(submit);
+
+
+        submit.className = 'popup__btn button';
+        submit.type = 'submit';
+        submit.innerHTML = 'Создать';
+
+        document.body.prepend(div);
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            div.remove();
+            createData(firstTime, form.getElementsByTagName('input'));
+        });
+    };
+
+    button.addEventListener('click', addItem);
+    clear.addEventListener('click', () => {
+        local.setItem(tableTitle, '');
+        table.innerHTML = '';
+        count = null;
+    });
+};
+
 closeBg();
 appTable();
