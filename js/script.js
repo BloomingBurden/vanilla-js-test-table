@@ -33,7 +33,7 @@ const changeTable = function () {
         tableTitle = bg.firstElementChild.value;
         tableTitle = tableTitle ? tableTitle[0].toUpperCase() + tableTitle.slice(1).toLowerCase() : nameTable;
         bg.parentElement.classList.add('bg-start-hidden');
-        console.log(local);
+        
         if (!tableTitle) return;
 
         if (local.hasOwnProperty(tableTitle)) {
@@ -51,9 +51,14 @@ const changeTable = function () {
         local.clear()
         tableList.innerHTML = '';
     });
+
     tableList.addEventListener('click', selectTable);
-    button.addEventListener('click', (e) => cb);
+    button.addEventListener('click', (e) => {
+        e.preventDefault();
+        cb(e);
+    });
     input.addEventListener('keyup', (e) => {
+        e.preventDefault();
         if (e.keyCode !== 13) return;
         cb(e);
     });
