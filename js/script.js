@@ -103,6 +103,8 @@ const appTable = function () {
         const tr = document.createElement('tr');
 
         for (let char of data) {
+            if (!char.value) return;
+
             const column = document.createElement(first ? 'th' : 'td');
             column.innerHTML = char.value;
             tr.append(column);
