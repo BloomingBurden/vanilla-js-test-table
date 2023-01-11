@@ -105,7 +105,7 @@ a {
 
 .table-list__title {
   margin: 0;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
   font-size: 24px;
   font-weight: 400;
   text-transform: uppercase;
@@ -115,6 +115,7 @@ a {
 .table-list {
   max-width: 600px;
   display: flex;
+  flex-wrap: wrap;
   padding: 0;
   margin: 0;
   margin-bottom: 40px;
@@ -124,11 +125,19 @@ a {
 
 .table-list__item:not(:last-child) {
   margin-right: 50px;
+  margin-bottom: 20px;
 }
 
 .table-list__item a {
   font-size: 20px;
   color: #000000;
+}
+
+.table-list__item a:hover,
+.table-list__item a:active,
+.table-list__item a:focus {
+  color: #f0f7fa;
+  transition: 0.3s;
 }
 
 .wrapper {

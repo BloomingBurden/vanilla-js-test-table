@@ -12,7 +12,6 @@ const changeTable = function () {
     const button = document.querySelector('.bg-start__wrap > button');
     const clearTable = document.querySelector('.table-list__button');
     const bg = document.querySelector('.bg-start__wrap');
-    const input = document.querySelector('.bg-start__wrap input');
     const tableList = document.querySelector('.table-list');
 
     for (let elem of Object.keys(local)) {
@@ -32,19 +31,24 @@ const changeTable = function () {
     const cb = function (e, nameTable) {
         tableTitle = bg.firstElementChild.value;
         tableTitle = tableTitle ? tableTitle[0].toUpperCase() + tableTitle.slice(1).toLowerCase() : nameTable;
+
+        if (!tableTitle) {
+            return false;
+        }
+
         bg.parentElement.classList.add('bg-start-hidden');
-        
-        if (!tableTitle) return;
 
         if (local.hasOwnProperty(tableTitle)) {
             getReadyTable(tableTitle);
         } else {
             local.setItem(tableTitle, '');
         }
-        
+
         table.previousElementSibling.innerHTML = tableTitle;
         setTimeout(() => bg.parentElement.remove(), 2000);
         table.parentElement.classList.add('table-show');
+
+        appTable();
     };
 
     clearTable.addEventListener('click', () => {
@@ -57,11 +61,6 @@ const changeTable = function () {
         e.preventDefault();
         cb(e);
     });
-    input.addEventListener('keyup', (e) => {
-        e.preventDefault();
-        if (e.keyCode !== 13) return;
-        cb(e);
-    });
 };
 
 // Если таблица уже была, создать ее. Строка 26.
@@ -69,7 +68,7 @@ const getReadyTable = function(title) {
     table.innerHTML = local.getItem(title);
 }
 
-//Код для таблицы. Строка 128
+//Код для таблицы. Строка 50;
 const appTable = function () {
     // Создать input столько, сколько человеку нужно. Строка 103
     const getCountTitle = function (n, th) {
@@ -155,4 +154,3 @@ const appTable = function () {
 };
 
 changeTable();
-appTable();
