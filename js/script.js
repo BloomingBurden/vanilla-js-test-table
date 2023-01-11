@@ -8,8 +8,9 @@ let tableTitle;
 
 
 // Создать или выбрать таблицу.
-const closeBg = function () {
+const changeTable = function () {
     const button = document.querySelector('.bg-start__wrap > button');
+    const clearTable = document.querySelector('.table-list__button');
     const bg = document.querySelector('.bg-start__wrap');
     const input = document.querySelector('.bg-start__wrap input');
     const tableList = document.querySelector('.table-list');
@@ -32,6 +33,8 @@ const closeBg = function () {
         tableTitle = bg.firstElementChild.value;
         tableTitle = tableTitle ? tableTitle[0].toUpperCase() + tableTitle.slice(1).toLowerCase() : nameTable;
         bg.parentElement.classList.add('bg-start-hidden');
+        console.log(local);
+        if (!tableTitle) return;
 
         if (local.hasOwnProperty(tableTitle)) {
             getReadyTable(tableTitle);
@@ -44,11 +47,15 @@ const closeBg = function () {
         table.parentElement.classList.add('table-show');
     };
 
+    clearTable.addEventListener('click', () => {
+        local.clear()
+        tableList.innerHTML = '';
+    });
     tableList.addEventListener('click', selectTable);
-    button.addEventListener('click', () => cb);
+    button.addEventListener('click', (e) => cb);
     input.addEventListener('keyup', (e) => {
         if (e.keyCode !== 13) return;
-        cb();
+        cb(e);
     });
 };
 
@@ -142,5 +149,5 @@ const appTable = function () {
     });
 };
 
-closeBg();
+changeTable();
 appTable();
